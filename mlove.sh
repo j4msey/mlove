@@ -25,53 +25,10 @@ source mlovechalenges.lst # Carregando desafios
 
 # Cabeçalho do Documento
 _head(){
-	local sun_or_heart="$(( ( RANDOM % 21) + 1))"
-	local IMG
-
-	# Trocando logos conforme a variavel mandar o numero.
-	if [[ "$sun_or_heart" = '1' ]]; then
-		IMG="img/sun.gif"
-	elif [[ "$sun_or_heart" = '2' ]]; then
-		IMG="img/heart.gif"
-	elif [[ "$sun_or_heart" = '3' ]]; then
-		IMG="img/cloud.gif"
-	elif [[ "$sun_or_heart" = '4' ]]; then
-		IMG="img/bunny.gif"
-	elif [[ "$sun_or_heart" = '5' ]]; then
-		IMG="img/bear.gif"
-	elif [[ "$sun_or_heart" = '6' ]]; then
-		IMG="img/cat.gif"
-	elif [[ "$sun_or_heart" = '7' ]]; then
-		IMG="img/rapouse.gif"
-	elif [[ "$sun_or_heart" = '8' ]]; then
-		IMG="img/stitch.gif"
-	elif [[ "$sun_or_heart" = '9' ]]; then
-		IMG="img/poney.gif"
-	elif [[ "$sun_or_heart" = '10' ]]; then
-		IMG="img/poney2.gif"
-	elif [[ "$sun_or_heart" = '11' ]]; then
-		IMG="img/poney3.gif"
-	elif [[ "$sun_or_heart" = '12' ]]; then
-		IMG="img/poney4.gif"
-	elif [[ "$sun_or_heart" = '13' ]]; then
-		IMG="img/princess.gif"
-	elif [[ "$sun_or_heart" = '14' ]]; then
-		IMG="img/eyes.gif"
-	elif [[ "$sun_or_heart" = '15' ]]; then
-		IMG="img/ground.gif"
-	elif [[ "$sun_or_heart" = '16' ]]; then
-		IMG="img/ground2.gif"
-	elif [[ "$sun_or_heart" = '17' ]]; then
-		IMG="img/piupiu.gif"
-	elif [[ "$sun_or_heart" = '18' ]]; then
-		IMG="img/1.gif"
-	elif [[ "$sun_or_heart" = '19' ]]; then
-		IMG="img/angry.gif"
-	elif [[ "$sun_or_heart" = '20' ]]; then
-		IMG="img/angry1.gif"
-	elif [[ "$sun_or_heart" = '21' ]]; then
-		IMG="img/bird10.gif"
-	fi
+	local random
+	local total_imagens="$(echo img/* | wc -w)"
+	random="$(( (RANDOM % total_imagens) + 1))"
+	local IMG="$(echo img/* | cut -d' ' -f$random)"
 
     cat <<EOF > index.html
 <!DOCTYPE html>
@@ -109,7 +66,7 @@ EOF
 
 # Rodapé do documento
 _footer(){
-    cat <<EOF
+    cat <<EOF >> index.html
 <hr>
 <footer>
 <h2>Te amo... Tenha um bom dia!</h2>
@@ -152,12 +109,12 @@ EOF
 EOF
 
 	# Desafio, imprimir ou não? 25 então imprimimos
-    chalenge="$(( ( RANDOM % 100) + 1))"
-    if [[ "$chalenge" = '25' ]] || [[ "$chalenge" = '28' ]] || [[ "$chalenge" = '34' ]]; then
-    	chalenge_total=${#msg_chalenges[@]}
+    challenge="$(( ( RANDOM % 100) + 1))"
+    if [[ "$challenge" = '25' ]] || [[ "$challenge" = '28' ]] || [[ "$challenge" = '34' ]]; then
+    	challenge_total=${#msg_challenges[@]}
     	# Gerando frase randomica.
-		number=$(( $RANDOM % $chalenge_total ))
-		print_msg="${msg_chalenges[$number]}"
+		number=$(( $RANDOM % $challenge_total ))
+		print_msg="${msg_challenges[$number]}"
 		cat << EOF >> index.html
 	<b>O desafio que caiu foi:</b><br><br>
 	$print_msg
@@ -174,12 +131,12 @@ EOF
 # Iniciando processo de envio
 ############################################
 
-_head >> index.html   # cabeçalho
+_head   # cabeçalho
 _GENERATE_MSG         # gerando mensagem para impressão
-_footer >> index.html # gerando rodapé
+_footer # gerando rodapé
 # Aumentando número do dia +1 de 369
 TEMP_DAYS=$(( $DAYS + 1 ))
 sed -i "s@DAYS=.*@DAYS="\"$TEMP_DAYS\""@" mlove.conf
 
 # Enviando para servidor.
-rsync -avzh /home/slackjeff/tati/ slackjeff@slackjeff.com.br:public_html/tati/\
+#rsync -avzh /home/slackjeff/tati/ slackjeff@slackjeff.com.br:public_html/tati/\
